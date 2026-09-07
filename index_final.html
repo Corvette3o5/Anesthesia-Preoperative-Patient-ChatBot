@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Preoperative Anesthesia Education Chatbot</title>
+  <style>
+    :root{
+      --bg-start:#eaf6fb;
+      --bg-end:#dcecf7;
+      --card:#ffffff;
+      --text:#17324d;
+      --muted:#5f7486;
+      --primary:#2f7ea8;
+      --primary-dark:#246585;
+      --primary-soft:#e6f2f8;
+      --border:#bfd3df;
+      --answer:#f4f9fc;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:linear-gradient(135deg,var(--bg-start),var(--bg-end));
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+
+    .app{
+      width:100%;
+      max-width:760px;
+    }
+
+    .site-header{
+      text-align:center;
+      margin-bottom:24px;
+    }
+
+    .site-logo{
+      width:54px;
+      height:54px;
+      margin:0 auto 10px;
+      border-radius:50%;
+      background:var(--primary);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+      font-size:1.15rem;
+      letter-spacing:.5px;
+      box-shadow:0 6px 16px rgba(23,50,77,.12);
+    }
+
+    .site-header h1{
+      margin:0;
+      font-size:2rem;
+      color:var(--text);
+      letter-spacing:.2px;
+    }
+
+    .welcome-card{
+      max-width:620px;
+      margin:0 auto;
+    }
+
+    .welcome-card h2{
+      font-size:1.8rem;
+      margin-bottom:18px;
+    }
+
+    .welcome-card .intro{
+      margin-bottom:22px;
+    }
+
+    .welcome-card .disclaimer{
+      margin-top:20px;
+      font-size:.9rem;
+      color:var(--muted);
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-top:6px solid var(--primary);
+      border-radius:18px;
+      padding:32px;
+      box-shadow:0 12px 30px rgba(23,50,77,.10);
+      text-align:center;
+    }
+
+    h1,h2{
+      margin-top:0;
+    }
+
+    h1{
+      font-size:2rem;
+      margin-bottom:12px;
+    }
+
+    h2{
+      font-size:1.5rem;
+      margin-bottom:16px;
+    }
+
+    p{
+      line-height:1.6;
+      margin:0 0 18px;
+    }
+
+    .muted{
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    .menu{
+      display:grid;
+      gap:18px;
+      margin-top:24px;
+    }
+
+    button{
+      font:inherit;
+      cursor:pointer;
+      border-radius:12px;
+      border:1px solid var(--border);
+      padding:15px 18px;
+      min-height:52px;
+      transition:.2s ease;
+    }
+
+    .question-btn{
+      width:100%;
+      text-align:center;
+      background:var(--primary-soft);
+      color:var(--text);
+      font-weight:600;
+    }
+
+    .question-btn:hover,
+    .question-btn:focus{
+      border-color:var(--primary);
+      outline:none;
+      box-shadow:0 0 0 3px rgba(37,99,235,.12);
+    }
+
+    .primary{
+      background:var(--primary);
+      color:#fff;
+      border-color:var(--primary);
+      font-weight:700;
+      padding-left:22px;
+      padding-right:22px;
+      box-shadow:0 4px 10px rgba(47,126,168,.18);
+    }
+
+    .primary:hover,
+    .primary:focus{
+      background:var(--primary-dark);
+      outline:none;
+    }
+
+    .secondary{
+      background:var(--primary-soft);
+      color:var(--text);
+      font-weight:700;
+    }
+
+    .secondary:hover,
+    .secondary:focus{
+      border-color:var(--primary);
+      outline:none;
+    }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:24px;
+      justify-content:center;
+    }
+
+    .progress-cue{
+      display:inline-block;
+      margin-bottom:10px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:var(--primary-soft);
+      color:var(--primary-dark);
+      font-size:.85rem;
+      font-weight:700;
+    }
+
+    .answer-box{
+      margin-top:18px;
+      padding:20px;
+      border-radius:14px;
+      background:var(--answer);
+      border:1px solid var(--border);
+      line-height:1.65;
+    }
+
+    .hidden{
+      display:none;
+    }
+
+    .footer{
+      text-align:center;
+      color:var(--muted);
+      font-size:.85rem;
+      margin-top:16px;
+    }
+
+    @media (max-width:600px){
+      .card{
+        padding:22px;
+      }
+
+      h1{
+        font-size:1.6rem;
+      }
+
+      .actions{
+        flex-direction:column;
+      }
+
+      .actions button{
+        width:100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+
+    <header id="siteHeader" class="site-header">
+      <div class="site-logo" aria-hidden="true">GC</div>
+      <h1>Gotham City Outpatient Center</h1>
+    </header>
+
+    <!-- WELCOME SCREEN -->
+    <section id="welcomeScreen" class="card welcome-card">
+      <h2>Preoperative Anesthesia Education Chatbot</h2>
+      <p class="intro">
+        Select Start to view common questions about anesthesia and surgery.
+      </p>
+      <button id="startBtn" class="primary" type="button">Start</button>
+      <p class="disclaimer">
+        This chatbot does not replace instructions from your surgeon, anesthesia provider,
+        or healthcare team. If you have any questions or concerns, please contact your surgeon
+        and anesthesia team.
+      </p>
+    </section>
+
+    <!-- MAIN QUESTION MENU -->
+    <section id="menuScreen" class="card hidden">
+      <h2>What would you like to know?</h2>
+      <p class="muted">Select one question below.</p>
+
+      <div class="menu">
+        <button class="question-btn" type="button" data-question="1">
+          When should I stop eating or drinking before surgery?
+        </button>
+
+        <button class="question-btn" type="button" data-question="2">
+          What should I do with my medications before surgery?
+        </button>
+
+        <button class="question-btn" type="button" data-question="3">
+          What should I tell my anesthesia provider before surgery?
+        </button>
+
+        <button class="question-btn" type="button" data-question="4">
+          What are some side effects of anesthesia?
+        </button>
+
+        <button class="question-btn" type="button" data-question="5">
+          Do I need a breathing tube?
+        </button>
+      </div>
+
+      <div class="actions">
+        <button id="menuEndBtn" class="secondary" type="button">End</button>
+      </div>
+    </section>
+
+    <!-- ANSWER SCREEN -->
+    <section id="answerScreen" class="card hidden">
+      <div id="progressCue" class="progress-cue"></div>
+      <h2 id="questionTitle"></h2>
+
+      <div id="answerText" class="answer-box"></div>
+
+      <div class="actions">
+        <button id="nextQuestionBtn" class="primary" type="button">Choose Another Question</button>
+        <button id="answerEndBtn" class="secondary" type="button">End</button>
+      </div>
+    </section>
+
+    <!-- END SCREEN -->
+    <section id="endScreen" class="card hidden">
+      <h2>Thank you for using the Preoperative Anesthesia Education Chatbot.</h2>
+      <div class="actions">
+        <button id="returnHomeBtn" class="primary" type="button">Return to Welcome Page</button>
+      </div>
+    </section>
+
+    <div class="footer">
+      Educational use only.
+    </div>
+  </main>
+
+  <script>
+    const questions = {
+      1: {
+        title: "When should I stop eating or drinking before surgery?",
+        answer: `
+          <p>Do not eat solid food for at least <strong>8 hours before you arrive</strong> for surgery. You may be allowed to drink <strong>clear liquids</strong>, such as water or clear juice without pulp, until <strong>2 hours before arrival</strong>.</p><p>Do <strong>NOT</strong> drink milk or other dairy products.</p><p>Some procedures may have different fasting instructions, so always follow the specific instructions given to you by your surgeon or anesthesia team.</p>
+        `
+      },
+      2: {
+        title: "What should I do with my medications before surgery?",
+        answer: `
+          <p>Many medications can be taken as usual, but some may need to be stopped or adjusted before surgery. This may include certain <strong>blood thinners, diabetes medications, and blood pressure medications</strong>.</p><p>Do not stop any medication on your own. Ask your surgeon or anesthesia team which medications you should take before surgery.</p><p>Bring an updated list of your medications, including vitamins and supplements, with you on the day of surgery.</p>
+        `
+      },
+      3: {
+        title: "What should I tell my anesthesia provider before surgery?",
+        answer: `
+          <p>Your anesthesia team needs to know about anything that could affect your care.</p><p>Tell them about:</p><ul><li>All medications, vitamins, and supplements you take</li><li>Any medical conditions you have</li><li>Allergies or previous reactions to anesthesia</li><li>Smoking, vaping, or marijuana use</li><li>Alcohol use</li><li>Snoring or sleep apnea</li><li>Any problems you or a family member have had with anesthesia</li></ul><p>Sharing this information helps your anesthesia team plan the safest care for you.</p>
+        `
+      },
+      4: {
+        title: "What are some side effects of anesthesia?",
+        answer: `
+          <p>Some common temporary side effects include:</p><ul><li>Nausea or vomiting</li><li>Sore throat</li><li>Feeling sleepy or confused</li><li>Chills or shivering</li><li>Muscle aches</li><li>Itching</li></ul><p>Not everyone experiences these side effects, and your care team can often give medications to help treat them.</p>
+        `
+      },
+      5: {
+        title: "Do I need a breathing tube?",
+        answer: `
+          <p>Not everyone needs a breathing tube.</p><p>During some types of general anesthesia, your anesthesia provider may place a breathing tube to help you breathe safely during surgery. The tube is usually placed after you are asleep and removed before you are fully awake.</p><p>Other types of airway devices may also be used depending on your surgery and health.</p><p>Your anesthesia provider will discuss the plan with you before your procedure.</p>
+        `
+      }
+    };
+
+    const siteHeader = document.getElementById("siteHeader");
+    const welcomeScreen = document.getElementById("welcomeScreen");
+    const menuScreen = document.getElementById("menuScreen");
+    const answerScreen = document.getElementById("answerScreen");
+    const endScreen = document.getElementById("endScreen");
+
+    const startBtn = document.getElementById("startBtn");
+    const menuEndBtn = document.getElementById("menuEndBtn");
+    const answerEndBtn = document.getElementById("answerEndBtn");
+    const nextQuestionBtn = document.getElementById("nextQuestionBtn");
+    const returnHomeBtn = document.getElementById("returnHomeBtn");
+
+    const questionTitle = document.getElementById("questionTitle");
+    const answerText = document.getElementById("answerText");
+    const progressCue = document.getElementById("progressCue");
+
+    function hideAllScreens() {
+      siteHeader.classList.add("hidden");
+      welcomeScreen.classList.add("hidden");
+      menuScreen.classList.add("hidden");
+      answerScreen.classList.add("hidden");
+      endScreen.classList.add("hidden");
+    }
+
+    function showMenu() {
+      hideAllScreens();
+      menuScreen.classList.remove("hidden");
+    }
+
+    function showAnswer(questionNumber) {
+      const item = questions[questionNumber];
+      if (!item) return;
+
+      questionTitle.textContent = item.title;
+      answerText.innerHTML = item.answer;
+      progressCue.textContent = `Question ${questionNumber} of 5`;
+
+      hideAllScreens();
+      answerScreen.classList.remove("hidden");
+    }
+
+    function endChat() {
+      hideAllScreens();
+      endScreen.classList.remove("hidden");
+    }
+
+    function showWelcome() {
+      hideAllScreens();
+      siteHeader.classList.remove("hidden");
+      welcomeScreen.classList.remove("hidden");
+    }
+
+    startBtn.addEventListener("click", showMenu);
+    nextQuestionBtn.addEventListener("click", showMenu);
+    menuEndBtn.addEventListener("click", endChat);
+    answerEndBtn.addEventListener("click", endChat);
+    returnHomeBtn.addEventListener("click", showWelcome);
+
+    document.querySelectorAll(".question-btn").forEach(button => {
+      button.addEventListener("click", () => {
+        showAnswer(button.dataset.question);
+      });
+    });
+  </script>
+</body>
+</html>
